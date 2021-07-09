@@ -5,47 +5,6 @@ import plotly.express as px
 
 st.set_page_config(page_title='test',layout='wide')
 
-st.write("""
-## US population according to state and county
-""")
-
-# reading and editing our data frame.
-pop_df = pd.read_excel('USA_County_Population.xlsx',skiprows=3)
-pop_df.rename(columns = {'Unnamed: 0': 'Name'}, inplace = True)
-
-# getting the population according to year
-def popByYear(year):
-    df = pop_df[['Name','Census',year]]
-    df.dropna(inplace=True)
-    df['County'] = [0]*len(df)
-    df['State'] = [0]*len(df)
-
-    i = 0
-    for name in df['Name']:
-        df.loc[i,'County'] = name.split(',')[0].replace('.','').replace('County','')
-        i+=1
-
-    i = 0
-    for name in df['Name']:
-        if len(name.split(',')) == 2:
-            df.loc[i,'State'] = name.split(',')[1]
-        i+=1
-
-    df['Country'] = 'USA'
-    df.drop([0],inplace=True)
-    return df
-    
-
-
-st.write("""
-## Select an year from the dropdown to view the population data
-""")
-year = st.selectbox(label = '',options=[2017,2018,2019])
-pop_data = popByYear(year)
-#st.dataframe(pop_data)
-fig_tree = px.treemap(pop_data, path=[px.Constant('Country'), 'State', 'County'], values=year)                
-st.plotly_chart(fig_tree,use_container_width=True)
-
 
 st.write("""
 ### Visuals from Mock data
